@@ -9,9 +9,15 @@ function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
+        <p>
+          Hi there!
+        </p>
+        <p>
+          Bye there!
+        </p>
         <a
           className="App-link"
-          href="https://reactjs.org"
+          href="https://migrateforlife.in"
           target="_blank"
           rel="noopener noreferrer"
         >
