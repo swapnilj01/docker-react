@@ -7,4 +7,4 @@ before_install:
   - docker build -t swapnilj01/react-app -f Dockerfile.dev .
 
 script:
-  - docker run swapnilj01/react-app npm run test -- --coverage
+  - docker run -e CI=true swapnilj01/react-app npm run test -- --coverage
