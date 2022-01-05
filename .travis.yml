@@ -1,22 +1,36 @@
 sudo: required
-
 services:
   - docker
 
 before_install:
-  - docker build -t swapnilj01/react-app -f Dockerfile.dev .
+  - docker build -t swapnilj01/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run -e CI=true swapnilj01/react-app npm run test -- --coverage
+  - docker run swapnilj01/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t swapnilj01/multi-client-10-14 ./client
+  - docker build -t swapnilj01/multi-nginx-10-14 ./nginx
+  - docker build -t swapnilj01/multi-server-10-14 ./server
+  - docker build -t swapnilj01/multi-worker-10-14 ./worker
+
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
+  # Take those images and push them to docker hub
+  - docker push swapnilj01/multi-client-10-14
+  - docker push swapnilj01/multi-nginx-10-14
+  - docker push swapnilj01/multi-server-10-14
+  - docker push swapnilj01/multi-worker-10-14
 
 deploy:
   provider: elasticbeanstalk
   region: "ap-south-1"
-  app: "docker-react"
-  env: "Dockerreact-env"
+  app: "multi-docker"
+  env: "MultiDocker-env"
   bucket_name: "elasticbeanstalk-ap-south-1-302304551949"
-  bucker_path: "docker-react"
+  bucket_path: "docker-multi"
   on:
     branch: master
   access_key_id: $AWS_ACCESS_KEY
-  secret_access_key: $AWS_SECRET_KEY
+  secret_access_key: "$AWS_SECRET_KEY"
